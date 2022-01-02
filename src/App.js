@@ -1,11 +1,18 @@
-import logo from "./logo.svg";
+import React, { useState } from "react";
 import "./App.css";
 
 function App() {
+  const [counter, setCounter] = useState(0);
+
+  const handleClick = () => {
+    setCounter(counter + 1);
+  };
   return (
     <div className="App">
-      <h1>Hello CodeSandbox</h1>
-      <h2>Start editing to see more magic happen!</h2>
+      <h1>Counter is at: {counter}</h1>
+      <h2>
+        <button onClick={handleClick}>Increment</button>
+      </h2>
     </div>
   );
 }
