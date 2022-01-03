@@ -5,20 +5,31 @@ import axios from "axios";
 
 function App() {
   const [counter, setCounter] = useState(0);
-  const [userName, setUserName] = useState("");
-  const [userPicture, setUserPicture] = useState("");
-  useEffect(() => {
-    axios
-      .get("https://randomuser.me/api")
-      .then(({ data: { results } }) => {
-        console.log(results[0]);
-        setUserName(`${results[0].name.first} ${results[0].name.last}`);
-        setUserPicture(results[0].picture.large);
-      })
-      .catch((error) => error);
-  }, []);
+  const [userData, setUserData] = useState([]);
   const handleClick = () => {
     setCounter(counter + 1);
+    fetchData(`https://randomuser.me/api?page={counter}`);
+  };
+
+  useEffect(() => {
+    fetchData("https://randomuser.me/api");
+  }, []);
+
+  const fetchData = async (url) => {
+    const { data } = await axios.get(url);
+    try {
+      const results = data.results;
+      console.log(data);
+      setUserData([
+        ...userData,
+        {
+          name: `${results[0].name.first} ${results[0].name.last}`,
+          link: results[0].picture.large,
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -27,13 +38,18 @@ function App() {
       <h2>
         <button onClick={handleClick}>Increment</button>
       </h2>
-      <p>
-        <span>Name:</span>
-        <span>{userName}</span>
-      </p>
-      <p>
-        <img src={userPicture} alt="user" />
-      </p>
+
+      {userData.map((user) => (
+        <div>
+          <p>
+            <span>Name:</span>
+            <span>{user.name}</span>
+          </p>
+          <p>
+            <img src={user.link} alt="user" />
+          </p>
+        </div>
+      ))}
     </div>
   );
 }
